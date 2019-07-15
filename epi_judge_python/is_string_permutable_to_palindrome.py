@@ -6,16 +6,10 @@ def can_form_palindrome(s):
     # A palindrome of even length has even number of letters per char
     # A palindrome of odd length has exactly one char that is odd number, all others even
     char_nums = Counter(s)
-    if len(s) % 2 == 0:
-        num_odds = 0
-        for char in char_nums:
-            num_odds += char_nums[char] % 2 # Counts the number of odds
-        return num_odds == 0
-    else:
-        num_odds = 0
-        for char in char_nums:
-            num_odds += char_nums[char] % 2 # Counts the number of odds
-        return num_odds == 1
+    num_odds = 0
+    for char in char_nums:
+        num_odds += char_nums[char] % 2 # Counts the number of odds
+    return num_odds <= 1
 
 
 if __name__ == '__main__':
