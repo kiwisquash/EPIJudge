@@ -1,23 +1,39 @@
 from test_framework import generic_test
 
+import bisect
+
+def index(a,x):
+    i = bisect.bisect_left(a, x)
+    if i !=len(a) and a[i] == x:
+        return i
+    return -1
 
 def intersect_two_sorted_arrays(A, B):
 
-    i = 0 #smaller
-    j = 0 #larger
+    if len(A) > len(B):
+        A, B = B, A
 
     output = []
-    prev = -float("inf")
-    while i < len(A) and j < len(B):
-        if A[i] == B[j] and A[i] != prev:
-            output.append(A[i])
-            prev = A[i]
-        if A[i] > B[j]:
-            A, B = B, A
-            i, j = j, i
-        i+=1
-
+    for a in A:
+        if index(B,a)!=-1 and index(output,a)==-1:
+            output.append(a)
     return output
+
+    # i = 0 #smaller
+    # j = 0 #larger
+
+    # output = []
+    # prev = -float("inf")
+    # while i < len(A) and j < len(B):
+    #     if A[i] == B[j] and A[i] != prev:
+    #         output.append(A[i])
+    #         prev = A[i]
+    #     if A[i] > B[j]:
+    #         A, B = B, A
+    #         i, j = j, i
+    #     i+=1
+
+    # return output
 
     # arrs = [A, B]
     # inds = [0, 0]
