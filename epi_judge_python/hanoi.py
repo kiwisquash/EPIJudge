@@ -9,16 +9,19 @@ NUM_PEGS = 3
 
 def compute_tower_hanoi(num_rings):
 
-    def compute(num_rings, src, tar, use):
+    def compute(num_rings, src, tar, use, output = None):
+
+        if output is None:
+            output = []
 
         if num_rings > 0:
-            compute(num_rings - 1, src, use, tar)
+            output = compute(num_rings - 1, src, use, tar, output)
             output.append((src,tar))
-            compute(num_rings - 1, use, tar, src)
+            output = compute(num_rings - 1, use, tar, src, output)
 
-    output = []
-    compute(num_rings, 0, 1, 2)
-    return output
+        return output
+
+    return compute(num_rings, 0, 1, 2)
 
 
 @enable_executor_hook
