@@ -2,8 +2,18 @@ from test_framework import generic_test
 
 
 def has_three_sum(A, t):
-    # TODO - you fill in here.
-    return True
+    A.sort()
+    for a in A:
+        tar = t - a
+        i, j = 0, len(A) - 1
+        while i <= j:
+            if tar < A[i] + A[j]:
+                j-=1
+            elif tar > A[i] + A[j]:
+                i+=1
+            else:
+                return True
+    return False
 
 
 if __name__ == '__main__':
