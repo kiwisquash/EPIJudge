@@ -18,8 +18,6 @@ def search_maze(maze, s, e):
         path.append(e)
         if e == s:
             return path
-        if e in visited:
-            return None
         visited.add(e)
         next_pts = []
         if e.y + 1 < len(maze[e.x]) and maze[e.x][e.y+1] == WHITE:
@@ -35,10 +33,8 @@ def search_maze(maze, s, e):
             right = Coordinate(x = e.x + 1, y = e.y)
             next_pts.append(right)
         if next_pts:
-            for pt in next_pts:
+            for pt in [x for x in next_pts if x not in visited]:
                 return find_path(s, pt, path, visited)
-        else:
-            return None
 
     return find_path(s, e)
 
