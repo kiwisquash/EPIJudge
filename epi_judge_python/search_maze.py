@@ -12,9 +12,35 @@ Coordinate = collections.namedtuple('Coordinate', ('x', 'y'))
 
 
 def search_maze(maze, s, e):
-    # TODO - you fill in here.
-    return []
 
+    def find_path(s, e, path = [], visited = set()):
+        print(path)
+        path.append(e)
+        if e == s:
+            return path
+        if e in visited:
+            return None
+        visited.add(e)
+        next_pts = []
+        if e.y + 1 < len(maze[e.x]) and maze[e.x][e.y+1] == WHITE:
+            bottom = Coordinate(x = e.x, y = e.y + 1)
+            next_pts.append(bottom)
+        if e.y - 1 >= 0 and maze[e.x][e.y-1] == WHITE:
+            top = Coordinate(x = e.x, y = e.y - 1)
+            next_pts.append(top)
+        if e.x - 1 >= 0 and maze[e.x-1][e.y] == WHITE:
+            left = Coordinate(x = e.x - 1, y = e.y)
+            next_pts.append(left)
+        if e.x + 1 < len(maze) and maze[e.x+1][e.y] == WHITE:
+            right = Coordinate(x = e.x + 1, y = e.y)
+            next_pts.append(right)
+        if next_pts:
+            for pt in next_pts:
+                return find_path(s, pt, path, visited)
+        else:
+            return None
+
+    return find_path(s, e)
 
 def path_element_is_feasible(maze, prev, cur):
     if not ((0 <= cur.x < len(maze)) and
