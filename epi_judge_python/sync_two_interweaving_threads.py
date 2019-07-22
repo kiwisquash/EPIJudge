@@ -1,41 +1,54 @@
 import threading
-import time
 
 CAP = 100
 
-output_list = []
-dt = .1
+class OddEvenMonitor(threading.Condition):
+    EVEN = False
+    ODD = True
 
-def print_odds():
-    for i in range(1,CAP,2):
-        with lock:
-            while (output_list and output_list[-1] % 2 == 1): 
-                time.sleep(dt)
+    def __init__(self):
+        super().__init__()
+        self.turn = self.ODD
+    
+    def wait_turn(self, old):
+        with self:
+            while self.turn != old:
+                self.wait()
+
+    def toggle_turn(self):
+        with self:
+            self.turn ^= True 
+            self.notify()
+
+class EvenThread(threading.Thread):
+
+    def __init__(self, monitor):
+        super().__init__()
+        self.monitor = monitor
+
+    def run(self): #Overwrites the run method
+        for i in range(2,CAP+1,2):
+            self.monitor.wait_turn(OddEvenMonitor.EVEN)
             print(i)
-            output_list.append(i)
+            self.monitor.toggle_turn()
 
-def print_evens():
-    print('KS')
-    print(output_list)
-    for i in range(2,CAP+1,2):
-        with lock:
-            while (output_list and output_list[-1] % 2 == 0): 
-                time.sleep(dt)
-            output_list.append(i)
-            time.sleep(dt)
+class OddThread(threading.Thread):
+
+    def __init__(self, monitor):
+        super().__init__()
+        self.monitor = monitor
+
+    def run(self): #Overwrites the run method
+        for i in range(1,CAP,2):
+            self.monitor.wait_turn(OddEvenMonitor.ODD)
+            print(i)
+            self.monitor.toggle_turn()
 
 if __name__ == "__main__":
-    lock = threading.Lock()
-    t1 = threading.Thread(target=print_odds)
-    t2 = threading.Thread(target=print_evens)
 
-    t1.start()
-    t2.start()
+    monitor = OddEvenMonitor()
+    oddThread = OddThread(monitor)
+    evenThread = EvenThread(monitor)
 
-    t1.join()
-    t2.join()
-
-    print("Complete!")
-    print(f"See this list {output_list}")
-    print(output_list == list(range(1,101)))
-
+    oddThread.start()
+    evenThread.start()
